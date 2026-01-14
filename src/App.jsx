@@ -3,6 +3,7 @@ import React, { useMemo, useRef, useState } from "react";
 export default function App() {
   const fileRef = useRef(null);
   const [imageUrl, setImageUrl] = useState(null);
+
   const [text, setText] = useState("made with ChatGPT by hiromi");
   const [fontSize, setFontSize] = useState(32);
   const [opacity, setOpacity] = useState(0.7);
@@ -16,7 +17,7 @@ export default function App() {
       tr: "右上",
       bl: "左下",
       br: "右下",
-      center: "中央"
+      center: "中央",
     }),
     []
   );
@@ -47,14 +48,13 @@ export default function App() {
     const ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0);
 
-    const scale = canvas.width / 1200; // だいたいのスケール補正
+    const scale = canvas.width / 1200;
     const fs = Math.max(12, Math.round(fontSize * scale));
     const pad = Math.round(padding * scale);
 
     ctx.font = `${fs}px system-ui, -apple-system, Segoe UI, Roboto, sans-serif`;
     ctx.fillStyle = color;
     ctx.globalAlpha = opacity;
-    ctx.textBaseline = "bottom";
 
     const metrics = ctx.measureText(text);
     const textW = metrics.width;
@@ -62,6 +62,8 @@ export default function App() {
 
     let x = pad;
     let y = canvas.height - pad;
+
+    ctx.textBaseline = "bottom";
 
     if (pos === "br") {
       x = canvas.width - pad - textW;
@@ -77,15 +79,15 @@ export default function App() {
       y = pad + textH;
     } else if (pos === "center") {
       x = (canvas.width - textW) / 2;
-      y = (canvas.height + textH) / 2;
+      y = canvas.height / 2;
       ctx.textBaseline = "middle";
     }
 
-    // 影（読みやすくする）
+    // 読みやすくする影
     ctx.save();
     ctx.globalAlpha = Math.min(1, opacity);
-    ctx.shadowColor = "rgba(0,0,0,0.55)";
-    ctx.shadowBlur = Math.round(6 * scale);
+    ctx.shadowColor = "rgba(0,0,0,0.35)";
+    ctx.shadowBlur = Math.round(8 * scale);
     ctx.shadowOffsetX = Math.round(2 * scale);
     ctx.shadowOffsetY = Math.round(2 * scale);
     ctx.fillText(text, x, y);
@@ -97,32 +99,88 @@ export default function App() {
     a.click();
   }
 
+  const ColorChip = ({ value, label }) => {
+    const selected = color.toLowerCase() === value.toLowerCase();
+    return (
+      <button
+        type="button"
+        onClick={() => setColor(value)}
+        className={[
+          "h-10 w-10 rounded-full border-2 transition-all",
+          "shadow-sm",
+          selected ? "border-pink-500 ring-4 ring-pink-200" : "border-white/60 hover:ring-4 hover:ring-pink-100",
+        ].join(" ")}
+        aria-label={label}
+        title={label}
+        style={{ backgroundColor: value }}
+      />
+    );
+  };
+
+  const PosButton = ({ value, children }) => {
+    const active = pos === value;
+    return (
+      <button
+        type="button"
+        onClick={() => setPos(value)}
+        className={[
+          "rounded-2xl px-4 py-3 text-sm font-semibold transition-all",
+          "shadow-sm",
+          active
+            ? "bg-pink-500 text-white shadow-md"
+            : "bg-white/70 text-pink-600 hover:bg-white",
+        ].join(" ")}
+      >
+        {children}
+      </button>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100">
-      <div className="mx-auto max-w-5xl p-6 space-y-6">
-        <header className="space-y-2">
-          <h1 className="text-2xl font-bold">署名メーカー</h1>
-          <p className="text-neutral-300">
-            画像を選んで、文字の署名を重ねて、PNGで保存できます。
-          </p>
-        </header>
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-rose-50 to-white text-slate-800">
+      <div className="mx-auto max-w-5xl p-6 md:p-10 space-y-6">
+        {/* Header */}
+        <div className="rounded-[28px] bg-white/80 backdrop-blur border border-pink-100 shadow-[0_20px_60px_-35px_rgba(244,114,182,0.65)] px-6 py-6 md:px-8">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-pink-400 to-rose-400 grid place-items-center shadow-md">
+              <span className="text-white text-2xl font-black">T</span>
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-black tracking-tight text-pink-600">
+                署名メーカー
+              </h1>
+              <p className="text-xs md:text-sm text-pink-400 font-semibold tracking-widest">
+                SIGN YOUR WORK
+              </p>
+            </div>
+          </div>
+        </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="rounded-2xl bg-neutral-900 p-5 space-y-4 shadow">
-            <div className="flex flex-wrap gap-3">
+          {/* Controls */}
+          <div className="rounded-[28px] bg-white/80 backdrop-blur border border-pink-100 shadow-[0_20px_60px_-35px_rgba(244,114,182,0.65)] p-6 md:p-7 space-y-6">
+            <div className="flex flex-wrap items-center gap-3">
               <button
+                type="button"
                 onClick={() => fileRef.current?.click()}
-                className="rounded-xl bg-white text-black px-4 py-2 font-medium hover:opacity-90"
+                className="rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 text-white px-5 py-3 font-bold shadow-md hover:opacity-95 active:scale-[0.99] transition"
               >
                 画像を選ぶ
               </button>
               <button
+                type="button"
                 onClick={downloadMerged}
                 disabled={!imageUrl}
-                className="rounded-xl bg-blue-600 px-4 py-2 font-medium disabled:opacity-40 hover:opacity-90"
+                className={[
+                  "rounded-2xl px-5 py-3 font-bold shadow-md transition",
+                  !imageUrl
+                    ? "bg-pink-200 text-white/70 cursor-not-allowed"
+                    : "bg-white text-pink-600 border border-pink-200 hover:bg-pink-50 active:scale-[0.99]",
+                ].join(" ")}
               >
                 署名入りPNGを保存
               </button>
+
               <input
                 ref={fileRef}
                 type="file"
@@ -132,32 +190,42 @@ export default function App() {
               />
             </div>
 
-            <label className="block text-sm text-neutral-300">
-              署名テキスト
+            {/* Text */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-pink-500 font-extrabold">
+                <span className="inline-block text-lg">T</span>
+                <span>署名テキスト</span>
+              </div>
               <input
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                className="mt-1 w-full rounded-xl bg-neutral-800 px-3 py-2 outline-none"
+                className="w-full rounded-2xl bg-pink-50 border border-pink-100 px-4 py-4 text-lg font-semibold outline-none focus:ring-4 focus:ring-pink-200"
                 placeholder="例：made with ChatGPT by hiromi"
               />
-            </label>
+            </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <label className="block text-sm text-neutral-300">
-                サイズ
+            {/* Sliders */}
+            <div className="grid gap-5 md:grid-cols-2">
+              <label className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-700">サイズ</span>
+                  <span className="text-sm font-bold text-pink-500">{fontSize}px</span>
+                </div>
                 <input
                   type="range"
                   min="12"
                   max="96"
                   value={fontSize}
                   onChange={(e) => setFontSize(Number(e.target.value))}
-                  className="mt-2 w-full"
+                  className="w-full accent-pink-500"
                 />
-                <div className="text-xs text-neutral-400 mt-1">{fontSize}px</div>
               </label>
 
-              <label className="block text-sm text-neutral-300">
-                透明度
+              <label className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-700">透明度</span>
+                  <span className="text-sm font-bold text-pink-500">{opacity}</span>
+                </div>
                 <input
                   type="range"
                   min="0.1"
@@ -165,53 +233,84 @@ export default function App() {
                   step="0.05"
                   value={opacity}
                   onChange={(e) => setOpacity(Number(e.target.value))}
-                  className="mt-2 w-full"
+                  className="w-full accent-pink-500"
                 />
-                <div className="text-xs text-neutral-400 mt-1">{opacity}</div>
               </label>
 
-              <label className="block text-sm text-neutral-300">
-                余白
+              <label className="space-y-2 md:col-span-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-700">余白</span>
+                  <span className="text-sm font-bold text-pink-500">{padding}px</span>
+                </div>
                 <input
                   type="range"
                   min="0"
                   max="80"
                   value={padding}
                   onChange={(e) => setPadding(Number(e.target.value))}
-                  className="mt-2 w-full"
-                />
-                <div className="text-xs text-neutral-400 mt-1">{padding}px</div>
-              </label>
-
-              <label className="block text-sm text-neutral-300">
-                色
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                  className="mt-2 h-10 w-full rounded-xl bg-neutral-800"
+                  className="w-full accent-pink-500"
                 />
               </label>
             </div>
 
-            <label className="block text-sm text-neutral-300">
-              位置
-              <select
-                value={pos}
-                onChange={(e) => setPos(e.target.value)}
-                className="mt-1 w-full rounded-xl bg-neutral-800 px-3 py-2 outline-none"
-              >
-                {Object.keys(posLabel).map((k) => (
-                  <option key={k} value={k}>
-                    {posLabel[k]}
-                  </option>
-                ))}
-              </select>
-            </label>
+            {/* Colors */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-pink-500 font-extrabold">
+                <span>🎨</span>
+                <span>文字色</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <ColorChip value="#ffffff" label="白" />
+                <ColorChip value="#111827" label="黒" />
+                <ColorChip value="#ff4da6" label="ピンク" />
+                <ColorChip value="#93c5fd" label="水色" />
+                <ColorChip value="#a7f3d0" label="ミント" />
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-slate-600">自由</span>
+                  <input
+                    type="color"
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                    className="h-10 w-14 rounded-2xl border-2 border-white/60 shadow-sm"
+                    title="カスタム色"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Position */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-pink-500 font-extrabold">
+                <span>✥</span>
+                <span>位置</span>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <PosButton value="tl">左上</PosButton>
+                <PosButton value="tr">右上</PosButton>
+                <PosButton value="center">中央</PosButton>
+                <PosButton value="bl">左下</PosButton>
+                <PosButton value="br">右下</PosButton>
+                <div className="rounded-2xl bg-white/40 border border-pink-100 grid place-items-center text-xs font-bold text-pink-400">
+                  {posLabel[pos]}
+                </div>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-500">
+              画像は端末内で合成して保存します（ローカル処理）。外部に送信しません。
+            </p>
           </div>
 
-          <div className="rounded-2xl bg-neutral-900 p-5 shadow">
-            <div className="aspect-[4/3] rounded-xl bg-neutral-800 flex items-center justify-center overflow-hidden">
+          {/* Preview */}
+          <div className="rounded-[28px] bg-white/80 backdrop-blur border border-pink-100 shadow-[0_20px_60px_-35px_rgba(244,114,182,0.65)] p-6 md:p-7">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-pink-600 font-black">プレビュー</div>
+              <div className="text-xs font-bold text-pink-400 bg-pink-50 border border-pink-100 px-3 py-1 rounded-full">
+                {imageUrl ? "画像あり" : "画像なし"}
+              </div>
+            </div>
+
+            <div className="aspect-[4/3] rounded-[22px] bg-gradient-to-b from-pink-50 to-white border border-dashed border-pink-200 flex items-center justify-center overflow-hidden">
               {imageUrl ? (
                 <img
                   src={imageUrl}
@@ -219,16 +318,26 @@ export default function App() {
                   className="h-full w-full object-contain"
                 />
               ) : (
-                <div className="text-neutral-400 text-sm">
+                <div className="text-pink-300 text-sm font-semibold">
                   左の「画像を選ぶ」からプレビューできます
                 </div>
               )}
             </div>
-            <p className="mt-3 text-xs text-neutral-400">
-              保存は端末内で合成するので、画像はサーバーに送られません（ローカル処理）。
-            </p>
+
+            <div className="mt-4 rounded-2xl bg-pink-50 border border-pink-100 p-4">
+              <div className="text-xs text-pink-500 font-black mb-1">いまの設定</div>
+              <div className="text-sm text-slate-700 font-semibold break-words">
+                {text}
+              </div>
+              <div className="mt-2 text-xs text-slate-500 font-semibold">
+                サイズ {fontSize}px / 透明度 {opacity} / 余白 {padding}px / 位置 {posLabel[pos]}
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Bottom cute spacer */}
+        <div className="h-8" />
       </div>
     </div>
   );
