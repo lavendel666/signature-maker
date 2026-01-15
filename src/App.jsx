@@ -99,6 +99,28 @@ export default function App() {
       padding: 18,
       boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
     },
+
+    header: {
+      marginBottom: 16,
+      padding: "10px 12px 14px",
+      borderRadius: 18,
+      background: "linear-gradient(135deg, #ffe3f1, #eaf6ff)",
+      border: "1px solid #f3d6e6",
+      textAlign: "center",
+    },
+    title: {
+      margin: 0,
+      fontSize: 22,
+      fontWeight: 800,
+      letterSpacing: 0.5,
+    },
+    subtitle: {
+      margin: "4px 0 0",
+      fontSize: 12,
+      opacity: 0.6,
+      letterSpacing: 1.2,
+    },
+
     btnPrimary: {
       width: "100%",
       border: "none",
@@ -156,7 +178,13 @@ export default function App() {
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-        {/* 画像を選ぶ（横長） */}
+        {/* 🌸 アプリ名 */}
+        <div style={styles.header}>
+          <h1 style={styles.title}>署名メーカー</h1>
+          <p style={styles.subtitle}>SIGN YOUR WORK</p>
+        </div>
+
+        {/* 画像を選ぶ */}
         <label>
           <div style={styles.btnPrimary}>画像を選ぶ</div>
           <input
@@ -246,7 +274,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* 保存ボタンは一番下 */}
+        {/* 保存ボタン */}
         <button style={styles.btnSave} onClick={handleDownload}>
           署名入りPNGを保存
         </button>
