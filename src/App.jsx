@@ -8,7 +8,7 @@ export default function App() {
   const [fontSize, setFontSize] = useState(32);
   const [opacity, setOpacity] = useState(0.7);
   const [padding, setPadding] = useState(24);
-  const [pos, setPos] = useState("br"); // br, bl, tr, tl, center
+  const [pos, setPos] = useState("br"); // br, bl, tr, tl
   const [color, setColor] = useState("#ffffff");
 
   const posLabel = useMemo(
@@ -17,7 +17,6 @@ export default function App() {
       tr: "右上",
       bl: "左下",
       br: "右下",
-      center: "中央",
     }),
     []
   );
@@ -77,13 +76,9 @@ export default function App() {
     } else if (pos === "tl") {
       x = pad;
       y = pad + textH;
-    } else if (pos === "center") {
-      x = (canvas.width - textW) / 2;
-      y = canvas.height / 2;
-      ctx.textBaseline = "middle";
     }
 
-    // 読みやすくする影
+    // 文字を読みやすくする影
     ctx.save();
     ctx.globalAlpha = Math.min(1, opacity);
     ctx.shadowColor = "rgba(0,0,0,0.35)";
@@ -108,7 +103,9 @@ export default function App() {
         className={[
           "h-10 w-10 rounded-full border-2 transition-all",
           "shadow-sm",
-          selected ? "border-pink-500 ring-4 ring-pink-200" : "border-white/60 hover:ring-4 hover:ring-pink-100",
+          selected
+            ? "border-pink-500 ring-4 ring-pink-200"
+            : "border-white/60 hover:ring-4 hover:ring-pink-100",
         ].join(" ")}
         aria-label={label}
         title={label}
@@ -156,7 +153,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-1">
           {/* Controls */}
           <div className="rounded-[28px] bg-white/80 backdrop-blur border border-pink-100 shadow-[0_20px_60px_-35px_rgba(244,114,182,0.65)] p-6 md:p-7 space-y-6">
             <div className="flex flex-wrap items-center gap-3">
@@ -209,7 +206,9 @@ export default function App() {
               <label className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-700">サイズ</span>
-                  <span className="text-sm font-bold text-pink-500">{fontSize}px</span>
+                  <span className="text-sm font-bold text-pink-500">
+                    {fontSize}px
+                  </span>
                 </div>
                 <input
                   type="range"
@@ -224,7 +223,9 @@ export default function App() {
               <label className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-700">透明度</span>
-                  <span className="text-sm font-bold text-pink-500">{opacity}</span>
+                  <span className="text-sm font-bold text-pink-500">
+                    {opacity}
+                  </span>
                 </div>
                 <input
                   type="range"
@@ -240,7 +241,9 @@ export default function App() {
               <label className="space-y-2 md:col-span-2">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-700">余白</span>
-                  <span className="text-sm font-bold text-pink-500">{padding}px</span>
+                  <span className="text-sm font-bold text-pink-500">
+                    {padding}px
+                  </span>
                 </div>
                 <input
                   type="range"
@@ -266,7 +269,9 @@ export default function App() {
                 <ColorChip value="#93c5fd" label="水色" />
                 <ColorChip value="#a7f3d0" label="ミント" />
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-slate-600">自由</span>
+                  <span className="text-sm font-bold text-slate-600">
+                    自由
+                  </span>
                   <input
                     type="color"
                     value={color}
@@ -284,15 +289,14 @@ export default function App() {
                 <span>✥</span>
                 <span>位置</span>
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <PosButton value="tl">左上</PosButton>
                 <PosButton value="tr">右上</PosButton>
-                <PosButton value="center">中央</PosButton>
                 <PosButton value="bl">左下</PosButton>
                 <PosButton value="br">右下</PosButton>
-                <div className="rounded-2xl bg-white/40 border border-pink-100 grid place-items-center text-xs font-bold text-pink-400">
-                  {posLabel[pos]}
-                </div>
+              </div>
+              <div className="rounded-2xl bg-white/40 border border-pink-100 grid place-items-center text-xs font-bold text-pink-400">
+                {posLabel[pos]}
               </div>
             </div>
 
@@ -300,44 +304,7 @@ export default function App() {
               画像は端末内で合成して保存します（ローカル処理）。外部に送信しません。
             </p>
           </div>
-
-          {/* Preview */}
-          <div className="rounded-[28px] bg-white/80 backdrop-blur border border-pink-100 shadow-[0_20px_60px_-35px_rgba(244,114,182,0.65)] p-6 md:p-7">
-            <div className="flex items-center justify-between mb-3">
-              <div className="text-pink-600 font-black">プレビュー</div>
-              <div className="text-xs font-bold text-pink-400 bg-pink-50 border border-pink-100 px-3 py-1 rounded-full">
-                {imageUrl ? "画像あり" : "画像なし"}
-              </div>
-            </div>
-
-            <div className="aspect-[4/3] rounded-[22px] bg-gradient-to-b from-pink-50 to-white border border-dashed border-pink-200 flex items-center justify-center overflow-hidden">
-              {imageUrl ? (
-                <img
-                  src={imageUrl}
-                  alt="preview"
-                  className="h-full w-full object-contain"
-                />
-              ) : (
-                <div className="text-pink-300 text-sm font-semibold">
-                  左の「画像を選ぶ」からプレビューできます
-                </div>
-              )}
-            </div>
-
-            <div className="mt-4 rounded-2xl bg-pink-50 border border-pink-100 p-4">
-              <div className="text-xs text-pink-500 font-black mb-1">いまの設定</div>
-              <div className="text-sm text-slate-700 font-semibold break-words">
-                {text}
-              </div>
-              <div className="mt-2 text-xs text-slate-500 font-semibold">
-                サイズ {fontSize}px / 透明度 {opacity} / 余白 {padding}px / 位置 {posLabel[pos]}
-              </div>
-            </div>
-          </div>
         </div>
-
-        {/* Bottom cute spacer */}
-        <div className="h-8" />
       </div>
     </div>
   );
