@@ -394,7 +394,6 @@ export default function App() {
           <div style={styles.field}>
             <div style={styles.label}>
               <span>🎨 文字色</span>
-              <span style={styles.helper}>パキッと可愛く</span>
             </div>
 
             <div style={styles.colorsRow}>
@@ -432,7 +431,6 @@ export default function App() {
           <div style={styles.field}>
             <div style={styles.label}>
               <span>✥ 位置</span>
-              <span style={styles.helper}>ボタンの色で分かる</span>
             </div>
 
             <div style={styles.posGrid}>
