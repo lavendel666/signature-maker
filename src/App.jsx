@@ -29,7 +29,7 @@ export default function App() {
   }, [imageFile]);
 
   const presetColors = useMemo(
-    () => ["#ffffff", "#111111", "#ff4da6", "#4dc3ff", "#3fe0c5"],
+    () => ["#ffffff", "#111111", "#E96A9A", "#9EC9F5", "#BFE9D5"],
     []
   );
 
@@ -88,199 +88,14 @@ export default function App() {
       display: "flex",
       justifyContent: "center",
       padding: 24,
-      background: "#fff6fb",
+      background: "#FFF7FA",
       fontFamily: "system-ui, -apple-system, sans-serif",
+      color: "#333",
     },
     card: {
       width: "100%",
       maxWidth: 520,
-      background: "#fff",
-      borderRadius: 24,
-      padding: 18,
-      boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-    },
-
-    header: {
-      marginBottom: 16,
-      padding: "10px 12px 14px",
-      borderRadius: 18,
-      background: "linear-gradient(135deg, #ffe3f1, #eaf6ff)",
-      border: "1px solid #f3d6e6",
-      textAlign: "center",
-    },
-    title: {
-      margin: 0,
-      fontSize: 22,
-      fontWeight: 800,
-      letterSpacing: 0.5,
-    },
-    subtitle: {
-      margin: "4px 0 0",
-      fontSize: 12,
-      opacity: 0.6,
-      letterSpacing: 1.2,
-    },
-
-    btnPrimary: {
-      width: "100%",
-      border: "none",
-      borderRadius: 18,
-      padding: "14px 16px",
-      fontSize: 15,
-      fontWeight: 700,
-      background: "linear-gradient(135deg, #ff4da6, #ff7bc4)",
-      color: "#fff",
-      cursor: "pointer",
-    },
-    btnSave: {
-      width: "100%",
-      marginTop: 18,
-      border: "none",
-      borderRadius: 20,
-      padding: "16px",
-      fontSize: 16,
-      fontWeight: 800,
-      background: "linear-gradient(135deg, #4dc3ff, #76d7ff)",
-      color: "#fff",
-      cursor: "pointer",
-    },
-    field: {
-      marginTop: 14,
-      padding: 12,
-      borderRadius: 16,
-      border: "1px solid #eee",
-    },
-    label: { fontWeight: 700, fontSize: 13 },
-    range: { width: "100%", marginTop: 8 },
-    text: {
-      width: "100%",
-      marginTop: 8,
-      padding: 10,
-      borderRadius: 12,
-      border: "1px solid #ddd",
-    },
-    grid2: {
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-      gap: 10,
-      marginTop: 10,
-    },
-    posBtn: (active) => ({
-      padding: 10,
-      borderRadius: 14,
-      border: active ? "2px solid #ff4da6" : "1px solid #ddd",
-      background: active ? "#ffe3f1" : "#fff",
-      fontWeight: 700,
-      cursor: "pointer",
-    }),
-  };
-
-  return (
-    <div style={styles.page}>
-      <div style={styles.card}>
-        {/* 🌸 アプリ名 */}
-        <div style={styles.header}>
-          <h1 style={styles.title}>署名メーカー</h1>
-          <p style={styles.subtitle}>SIGN YOUR WORK</p>
-        </div>
-
-        {/* 画像を選ぶ */}
-        <label>
-          <div style={styles.btnPrimary}>画像を選ぶ</div>
-          <input
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={(e) => setImageFile(e.target.files[0])}
-          />
-        </label>
-
-        <div style={styles.field}>
-          <div style={styles.label}>署名テキスト</div>
-          <input
-            style={styles.text}
-            value={signatureText}
-            onChange={(e) => setSignatureText(e.target.value)}
-          />
-        </div>
-
-        <div style={styles.field}>
-          <div style={styles.label}>サイズ {fontSize}px</div>
-          <input
-            style={styles.range}
-            type="range"
-            min={12}
-            max={120}
-            value={fontSize}
-            onChange={(e) => setFontSize(+e.target.value)}
-          />
-        </div>
-
-        <div style={styles.field}>
-          <div style={styles.label}>透明度 {opacity}</div>
-          <input
-            style={styles.range}
-            type="range"
-            min={0}
-            max={1}
-            step={0.05}
-            value={opacity}
-            onChange={(e) => setOpacity(+e.target.value)}
-          />
-        </div>
-
-        <div style={styles.field}>
-          <div style={styles.label}>余白 {padding}px</div>
-          <input
-            style={styles.range}
-            type="range"
-            min={0}
-            max={200}
-            value={padding}
-            onChange={(e) => setPadding(+e.target.value)}
-          />
-        </div>
-
-        <div style={styles.field}>
-          <div style={styles.label}>文字色</div>
-          <div style={styles.grid2}>
-            {presetColors.map((c) => (
-              <button
-                key={c}
-                onClick={() => setColor(c)}
-                style={{
-                  height: 34,
-                  borderRadius: 999,
-                  border: color === c ? "3px solid #ff4da6" : "1px solid #ddd",
-                  background: c,
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div style={styles.field}>
-          <div style={styles.label}>位置</div>
-          <div style={styles.grid2}>
-            {POSITIONS.map((p) => (
-              <button
-                key={p.key}
-                onClick={() => setPosition(p.key)}
-                style={styles.posBtn(position === p.key)}
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 保存ボタン */}
-        <button style={styles.btnSave} onClick={handleDownload}>
-          署名入りPNGを保存
-        </button>
-
-        <canvas ref={canvasRef} style={{ display: "none" }} />
-      </div>
-    </div>
-  );
-}
+      background: "#ffffff",
+      borderRadius: 28,
+      padding: 20,
+      boxShadow: "0 12px 30px rgba(233,106,154,
